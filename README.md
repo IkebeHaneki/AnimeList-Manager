@@ -14,4 +14,3 @@
 ## Why this project interests me?
 - Develop a project can practice my skills to java programming.
 - I'm a gamer, I want to make a game by myself, even thought it's simple or not very advanced.
-An example of text with **bold** and *italic* fonts.  
