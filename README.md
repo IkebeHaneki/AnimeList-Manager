@@ -17,8 +17,7 @@
 
 
 ## User Stories
-- As a user, I want to battle this game with another player with same screen.
-- As a user, I can move my tank by pressing "AWSD" or arrow keys.
+- As a user, I want to reload my bullets in my magazine of the tank.
+- As a user, I can check how many bullets I left in the magazine of my tank.
 - As a user, I want to shoot the bullets and destroy the walls.
-- As a user, I want to save the game progress and can be resume lator.
 - As a user, I want to get feed back when I win or lose.
