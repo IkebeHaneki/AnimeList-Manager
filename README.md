@@ -1,10 +1,17 @@
-# My Personal Project
+# My Personal Project: Tank Fight Game
 
-## A subtitle
+## What Will the Application do?
+- This application is a **2-players** tank battle game in the shared screen with same keyboard.
+- The walls in the map can be break down by the bullets of the tank, which offered strategic depth.
+- The game progress can be saved and resume later.
+- The game will end when a tank's health become 0.
 
-A *bulleted* list:
-- item 1
-- item 2
-- item 3
 
+## Who Will Use It?
+- Gamers who looking for a quick and local entertainment.
+- Students who develop for a educational purpose.
+
+## Why this project interests me?
+- Develop a project can practice my skills to java programming.
+- I'm a gamer, I want to make a game by myself, even thought it's simple or not very advanced.
 An example of text with **bold** and *italic* fonts.  
