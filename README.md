@@ -1,23 +1,25 @@
-# My Personal Project: Tank Fight Game
+# My Personal Project: Anime List Manager
 
 ## What Will the Application do?
-- This application is a **2-players** tank battle game in the shared screen with same keyboard.
-- The walls in the map can be break down by the bullets of the tank, which offered strategic depth.
-- The game progress can be saved and resume later.
-- The game will end when a tank's health become 0.
+- This application is a Anime List Manager that designed to help users to manage their anime watch list.
+- Users can add animes by its name,type,release date, and watch status (Watching, Completed, Plan to Watch)
+- Users can save their anime list data and reload.
+- Users can search the anime they want in their anime list by its type, release date, watch status.
 
 
 ## Who Will Use It?
-- Gamers who looking for a quick and local entertainment.
+- Anime lovers who want to organize and track their watched or planned anime.
 - Students who develop for a educational purpose.
 
 ## Why this project interests me?
 - Develop a project can practice my skills to java programming.
-- I'm a gamer, I want to make a game by myself, even thought it's simple or not very advanced.
+- This application can be useful for a practical purpose.
+- This can be improved furthur by adding sharing, recommendation in the future development (not in project).
 
 
 ## User Stories
-- As a user, I want to reload my bullets in my magazine of the tank.
-- As a user, I want check how many bullets I left in the magazine of my tank.
-- As a user, I want to shoot the bullets and destroy the walls.
-- As a user, I want to get feed back when I win or lose.
+- As a user, I want to add my anime in my list.
+- As a user, I want to view my anime list.
+- As a user, I want to search the anime I want by filtering.
+- As a user, I want to delete the anime I don't want save in my list.
+- As a user, I want to update the anime's watch status that keep my list accurate and up-to-date.
