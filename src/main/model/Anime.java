@@ -31,7 +31,7 @@ public class Anime {
     
     //MODIFIES:this
     //EFFECTS:Change the anime's name to the given name
-    public void setName(String name) {
+    public void setName() {
     } 
 
     // Get the types of the anime
@@ -43,7 +43,7 @@ public class Anime {
     
     //MODIFIES:this
     //EFFECTS:set the list of types for anime
-    public void setTypes(List<AnimeType> types) {
+    public void setTypes() {
     }
 
     //EFFECTS:Get the release date and month of the anime
@@ -53,7 +53,7 @@ public class Anime {
 
     //EFFECTS: Set the release year and month for the anime
     //MODIFIES:this
-    public void setTime(String time) {
+    public void setTime() {
     }
 
     //EFFECTS: Get the watch status of the anime
@@ -63,6 +63,6 @@ public class Anime {
 
     //EFFECTS:Set the watch status of the anime
     // MODIFIES: this
-    public void setStatus(String watchstatus) {
+    public void setStatus() {
     }
 }

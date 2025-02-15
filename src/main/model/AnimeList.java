@@ -1,35 +1,48 @@
 package model;
 
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AnimeList {
-    private List<Anime> animes;
-     // A New anime List
-
+    
+    //EFFECT:creates a new list that no anime contained
+    //MODIFIES:this
     public AnimeList() {
-        this.animes = new ArrayList<>();
+        //stub
     }
 
-    // Add a anime in the list
-    public void addAnime(Anime anime) {
-        animes.add(anime);
+    
+    //EFFECTS:add the anime into the anime list
+    public void addAnime() {
+        //stub
     }
 
-    //Delete the chosen anime from list
-    public void removeAnime(Anime anime) {
-        animes.remove(anime);
+    //EFFECTS: remove the anime from the list
+    public void removeAnime() {
+        //stub
     }
 
-    // Search the animes that users want by the types they want
-    public List<Anime> searchByTypes(List<AnimeType> types) {
-        List<Anime> result = new ArrayList<>();
-        for (Anime anime : animes) {
-            if (anime.getTypes().containsAll(types)) {
-                result.add(anime);
-            }
-        }
-        return result;
+    //EFFECTES: Return the list of anime which contains the types chosen by user
+    public List<Anime> searchByTypes() {
+        return null;
+    }
+
+    //EFFECTS: Search the animes that users want by the release year and month
+    public List<Anime> searchByTime() {
+        return null;
+    }
+
+    //EFFECTS:update the anime status when it alrady added in the list
+    //REQUIRE: anime should already in the list
+
+    public void updateStatus() {
+        //stub
+    }
+
+    //EFFECT: return the anime list
+    public List<Anime> getAnimes() {
+        return null;
     }
     
 }
