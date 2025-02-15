@@ -3,64 +3,66 @@ package model;
 import java.time.YearMonth;
 import java.util.List;
 
+//import javax.sound.sampled.AudioFileFormat.Type;
+
+// Represents an Anime having a name, list of types(genres), 
+// and its release date(yyyy-MM), watch status
 public class Anime {
-    private String name;
-    private List<AnimeType> types;
-    private YearMonth yearMonth;
-    private WatchStatus watchstatus;
     
-    public Anime(String name, List<AnimeType> types, YearMonth yearMonth, WatchStatus watchstatus) {
-        this.name = name;
-        this.types = types;
-        this.yearMonth = yearMonth;
-        this.watchstatus = watchstatus;
+
+
+    /*
+     * EFFECTS: name of the anime is set to name; 
+     * Anime types is a list that never be null;
+     * YearMonth is the release date of anime, in format of yyyy-MM.
+     * Watch Status is the status of the anime(Watching, Completed, Plan to Watch)
+     */
+
+    public Anime() {
+        //stub
     }
 
-    // Get the name of the Anime
+    
+    //EFFECTS: return the name of the anime
     public String getName() {
-        return name;
+        return null;
     }
 
-    // Set up the anime's name
+    
+    //MODIFIES:this
+    //EFFECTS:Change the anime's name to the given name
     public void setName(String name) {
-        this.name = name;
     } 
 
     // Get the types of the anime
+    //EFFECTS:return the list of types of the anime
     public List<AnimeType> getTypes() {
-        return types;
+        return null;
     }
 
-    // Set the types of the anime
+    
+    //MODIFIES:this
+    //EFFECTS:set the list of types for anime
     public void setTypes(List<AnimeType> types) {
-        this.types = types;
     }
 
-    // Get the release date and month of the anime
+    //EFFECTS:Get the release date and month of the anime
     public YearMonth getTime() {
-        return yearMonth;
+        return null;
     }
 
-    // Set the release year and month for the anime
-    public void setTime(YearMonth time) {
-        this.yearMonth = time;
+    //EFFECTS: Set the release year and month for the anime
+    //MODIFIES:this
+    public void setTime(String time) {
     }
 
-    // Get the watch status of the anime
+    //EFFECTS: Get the watch status of the anime
     public WatchStatus getStatus() {
-        return watchstatus;
+        return null;
     }
 
-    // Set the watch status of the anime
-    public void setStatus(WatchStatus watchstatus) {
-        this.watchstatus = watchstatus;
-    }
-
-    @Override
-    public String toString() {
-        return "Anime [name=" + name
-            + ", types=" + types
-            + ", releaseYearMonth=" + yearMonth
-            + ", watchStatus=" + watchstatus + "]";
+    //EFFECTS:Set the watch status of the anime
+    // MODIFIES: this
+    public void setStatus(String watchstatus) {
     }
 }
