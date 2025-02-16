@@ -5,4 +5,7 @@ import exception.NumberException;
 
 public class Main {
     //stub
+    public static void main(String[] args) throws NumberException {
+        new AnimeListConsoleUI();
+    }
 }
