@@ -262,7 +262,6 @@ public class AnimeListConsoleUI {
     // EFFECTS: set anime's watching status from string that users entered.
     // MODIFIES: anime
     private boolean setAnimeStatus(Anime anime, String newStatusString) {
-    // Store the old status first
         WatchStatus oldStatus = anime.getStatus();
 
         try {
