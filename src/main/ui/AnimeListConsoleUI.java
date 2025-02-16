@@ -17,7 +17,7 @@ public class AnimeListConsoleUI {
 
     // EFFECTS: construct the ui and start the users menu
     public AnimeListConsoleUI() throws NumberException {
-        //stub
+        // stub
         scanner = new Scanner(System.in);
         animeList = new AnimeList();
         scanner.useDelimiter("\r?\n|\r");
@@ -27,19 +27,19 @@ public class AnimeListConsoleUI {
     // EFFECTS:run the main menu loop until users exit.
 
     private void runApp() throws NumberException {
-        //stub
+        // stub
         boolean keepGoing = true;
         while (keepGoing) {
             displayMenu();
             String choice = scanner.nextLine().trim();
             keepGoing = handleUserChoice(choice);
         }
-        System.out.println("Exiting... GoodBye!!!");
+        System.out.println("You want exit? OK, byebye!!");
     }
 
     // EFFECTS: handle users choice to do functions on the application
     private boolean handleUserChoice(String choice) throws NumberException {
-        //return true; //stub
+        // return true; //stub
         switch (choice) {
             case "1":
                 addAnime();
@@ -57,9 +57,9 @@ public class AnimeListConsoleUI {
                 updateWatchStatus();
                 break;
             case "0":
-                return false; // Will break out of the while loop in runApp()
+                return false;
             default:
-                System.out.println("Invalid input, Please choose again");
+                System.out.println("What you just typed in? Choose a valid number pls!!");
         }
         return true;
     }
@@ -67,23 +67,29 @@ public class AnimeListConsoleUI {
     // EFFECTS: display the users menu loop
 
     private void displayMenu() {
-        //stub
-        System.out.println("\n=== Anime List Manager ===, Ciallo~(∠・ω< )⌒☆");
+        // stub
+        System.out.println("\n This is Anime List Manager, Ciallo~(∠・ω< )⌒☆");
         System.out.println("1. Add Anime");
         System.out.println("2. View All Animes");
         System.out.println("3. Search Anime");
         System.out.println("4. Delete Anime");
         System.out.println("5. Update Watch Status");
         System.out.println("0. Exit");
-        System.out.print("Enter Your Choice ");
+        System.out.print("Tell me Your Choice: ");
     }
 
     // EFFECTS: add a new anime(name,types, release time, status) to the anime list
     // MODIFIES: this
     private void addAnime() {
-        //stub
-        System.out.println("Anime Name ");
+        // stub
+        System.out.println("Please enter the Anime Name ");
         String name = scanner.nextLine().trim();
+
+        if (name.isEmpty()) {
+            System.out.println("Anime's name should not be empty!!!! The Nameless");
+            addAnime();
+        }
+
         List<AnimeType> types = selectMultipleTypes();
         YearMonth ym = promptYearMonth();
         Anime anime = new Anime(name, types, ym, null);
@@ -93,7 +99,7 @@ public class AnimeListConsoleUI {
             if (validStatus) {
                 break;
             }
-        } 
+        }
         animeList.addAnime(anime);
         System.out.println("Anime Added Successful!!!");
     }
@@ -101,7 +107,7 @@ public class AnimeListConsoleUI {
     // EFFECTS: represent all animes in the list
 
     private void viewAllAnime() {
-        //stub
+        // stub
         List<Anime> animes = animeList.getAnimes();
         if (animes.isEmpty()) {
             System.out.println("No anime in the list.");
@@ -116,25 +122,31 @@ public class AnimeListConsoleUI {
     // EFFECTS: Let users to choose the way to search anime from the list.
 
     private void searchAnime() {
-        //stub
+        // stub
+        if (animeList.getAnimes().isEmpty()) {
+            System.out.println("If you want search, there must have things right? Add Animes First!!!");
+            return;
+        }
+
         System.out.println("Choose the method you want to search!");
         System.out.println("Enter 1 to search By Types");
         System.out.println("Enter 2 to search By Time");
-        System.out.println("Your Choice: ");
+        System.out.println("Tell me Your Choice: ");
         String choice = scanner.nextLine().trim();
         if (choice.equals("1")) {
             searchByMultipleTypes();
         } else if (choice.equals("2")) {
             searchByTime();
         } else {
-            System.out.println("Invalid Choice!!!");
+            System.out.println("Invalid Choice!!! Please Try Again");
+            searchAnime();
         }
     }
 
     // EFFECTS: delete the anime that users want to remove from the list
     // MODEFIES:this
     private void deleteAnime() throws NumberException {
-        //stub
+        // stub
         viewAllAnime();
         List<Anime> animes = animeList.getAnimes();
         if (animes.isEmpty()) {
@@ -154,7 +166,7 @@ public class AnimeListConsoleUI {
     // EFFECTS: change the watch status of the anime that users want to change.
     // MODIFIES:this
     private void updateWatchStatus() {
-        //stub
+        // stub
         viewAllAnime();
         List<Anime> animes = animeList.getAnimes();
         if (animes.isEmpty()) {
@@ -178,7 +190,7 @@ public class AnimeListConsoleUI {
     // EFFECTS: help users to choose multiple types for creating new anime or search
     // anime.
     private List<AnimeType> selectMultipleTypes() {
-        //return null; //stub
+        // return null; //stub
         List<AnimeType> chosen = new ArrayList<>();
         while (true) {
             printTypeOptions();
@@ -197,7 +209,7 @@ public class AnimeListConsoleUI {
 
     // EFFECT:represent all anime types that users can choose
     private void printTypeOptions() {
-        //stub
+        // stub
         System.out.println("\n0 to finish selecting types.");
         // List<AnimeType> vals = new ArrayList<AnimeType>();
         AnimeType[] vals = AnimeType.values();
@@ -210,7 +222,7 @@ public class AnimeListConsoleUI {
     // EFFECTS: help users to add the types they selected to type list.
     // MODIFIES: chosen
     private void addSelectedType(List<AnimeType> chosen, int input) {
-        //stub
+        // stub
         int idx = input - 1;
         AnimeType[] vals = AnimeType.values();
         if (idx >= 0 && idx < vals.length) {
@@ -227,7 +239,7 @@ public class AnimeListConsoleUI {
 
     // EFFECTS: help users for a valid release time of anime in yyyy-MM format.
     private YearMonth promptYearMonth() {
-        //return null; //stub
+        // return null; //stub
         final DateTimeFormatter YM_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM");
         while (true) {
             System.out.print("Enter the release date of the anime (yyyy-MM): ");
@@ -242,7 +254,7 @@ public class AnimeListConsoleUI {
 
     // EFFECTS: a helper for users to a string watch status
     private String promptStatusString() {
-        //return null; //stub
+        // return null; //stub
         System.out.println("Enter the Watch status (watching, completed, plan to watch): ");
         return scanner.nextLine().trim();
     }
@@ -250,7 +262,7 @@ public class AnimeListConsoleUI {
     // EFFECTS: set anime's watching status from string that users entered.
     // MODIFIES: anime
     private boolean setAnimeStatus(Anime anime, String status) {
-        //return true; //stub
+        // return true; //stub
         try {
             anime.setStatus(status);
             System.out.println("Anime Status Updated!");
@@ -263,7 +275,7 @@ public class AnimeListConsoleUI {
 
     // EFFECTS: return anime by filtering the anime types user choosed.
     private void searchByMultipleTypes() {
-        //stub
+        // stub
         List<AnimeType> chosenTypes = selectMultipleTypes();
 
         if (chosenTypes.isEmpty()) {
@@ -285,7 +297,7 @@ public class AnimeListConsoleUI {
 
     // EFFECTS:return animes by searching the release time of anime
     private void searchByTime() {
-        //stub
+        // stub
         YearMonth ym = promptYearMonth();
         List<Anime> res = animeList.searchByTime(ym);
         if (res.isEmpty()) {
