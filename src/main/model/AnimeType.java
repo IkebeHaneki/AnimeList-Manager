@@ -9,6 +9,6 @@ public enum AnimeType {
     Fantasy,
     Romance,
     Tragic,
-    Adventure
-
+    Adventure,
+    Sports
 }
