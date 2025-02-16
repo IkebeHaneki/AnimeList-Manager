@@ -3,6 +3,7 @@ package ui;
 import model.AnimeList;
 import model.Anime;
 import model.AnimeType;
+import model.WatchStatus;
 import exception.*;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -16,7 +17,7 @@ public class AnimeListConsoleUI {
     private AnimeList animeList;
 
     // EFFECTS: construct the ui and start the users menu
-    public AnimeListConsoleUI() throws NumberException {
+    public AnimeListConsoleUI() {
         // stub
         scanner = new Scanner(System.in);
         animeList = new AnimeList();
@@ -26,7 +27,7 @@ public class AnimeListConsoleUI {
     }
     // EFFECTS:run the main menu loop until users exit.
 
-    private void runApp() throws NumberException {
+    private void runApp() {
         // stub
         boolean keepGoing = true;
         while (keepGoing) {
@@ -38,7 +39,7 @@ public class AnimeListConsoleUI {
     }
 
     // EFFECTS: handle users choice to do functions on the application
-    private boolean handleUserChoice(String choice) throws NumberException {
+    private boolean handleUserChoice(String choice) {
         // return true; //stub
         switch (choice) {
             case "1":
@@ -145,7 +146,7 @@ public class AnimeListConsoleUI {
 
     // EFFECTS: delete the anime that users want to remove from the list
     // MODEFIES:this
-    private void deleteAnime() throws NumberException {
+    private void deleteAnime() {
         // stub
         viewAllAnime();
         List<Anime> animes = animeList.getAnimes();
@@ -166,24 +167,23 @@ public class AnimeListConsoleUI {
     // EFFECTS: change the watch status of the anime that users want to change.
     // MODIFIES:this
     private void updateWatchStatus() {
-        // stub
         viewAllAnime();
         List<Anime> animes = animeList.getAnimes();
         if (animes.isEmpty()) {
             System.out.println("List is empty, please add animes first!");
             return;
         }
+    
         System.out.print("Enter the number of the anime to update: ");
-        try {
-            int idx = Integer.parseInt(scanner.nextLine().trim()) - 1;
-            if (idx >= 0 && idx < animes.size()) {
-                String statusStr = promptStatusString();
-                setAnimeStatus(animes.get(idx), statusStr);
-            } else {
-                System.out.println("Invalid index.");
-            }
-        } catch (NumberFormatException e) {
-            System.out.println("Number out of Range, can't find the anime");
+        String input = scanner.nextLine().trim();
+    
+        int idx = Integer.parseInt(input) - 1;
+        if (idx >= 0 && idx < animes.size()) {
+            String statusStr = promptStatusString(); 
+            setAnimeStatus(animes.get(idx), statusStr);
+        } else {
+            System.out.println("Invalid index, can't find the anime!");
+            updateWatchStatus();
         }
     }
 
@@ -261,12 +261,20 @@ public class AnimeListConsoleUI {
 
     // EFFECTS: set anime's watching status from string that users entered.
     // MODIFIES: anime
-    private boolean setAnimeStatus(Anime anime, String status) {
-        // return true; //stub
+    private boolean setAnimeStatus(Anime anime, String newStatusString) {
+    // Store the old status first
+        WatchStatus oldStatus = anime.getStatus();
+
         try {
-            anime.setStatus(status);
-            System.out.println("Anime Status Updated!");
-            return true;
+            anime.setStatus(newStatusString);
+
+            if (anime.getStatus() == oldStatus) {
+                System.out.println("You just entered the same status!!!! No Change Made.");
+                return false;
+            } else {
+                System.out.println("Anime Status Updated!");
+                return true;
+            }
         } catch (StatusException e) {
             System.out.println("Invalid status. No change made.");
             return false;
