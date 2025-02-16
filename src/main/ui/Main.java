@@ -1,7 +1,8 @@
 package ui;
 
+import exception.NumberException;
+//EFFECTS: Entries for the Anime List Manager Application
+
 public class Main {
-    public static void main(String[] args) throws Exception {
-        System.out.println("Welcome to my project!");
-    }
+    //stub
 }
