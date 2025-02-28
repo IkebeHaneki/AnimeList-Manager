@@ -306,12 +306,12 @@ public class AnimeListConsoleUI {
     private void searchByTime() {
         // stub
         YearMonth ym = promptYearMonth();
-        List<Anime> res = animeList.searchByTime(ym);
-        if (res.isEmpty()) {
+        List<Anime> results = animeList.searchByTime(ym);
+        if (results.isEmpty()) {
             System.out.println("No results.");
         } else {
             System.out.println("\n=== Search Results ===");
-            for (Anime a : res) {
+            for (Anime a : results) {
                 System.out.println(a);
             }
         }
