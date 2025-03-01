@@ -25,3 +25,5 @@
 - As a user, I want to update the anime's watch status that keep my list accurate and up-to-date.
 - As a user, I want to save my animelist when I quit.
 - As a user, I want to reload my saved animelist when I want.
+- As a user, I want to save multiple animelists when I need.
+- As a user, I want to choose which animelist to be reload when I need.
