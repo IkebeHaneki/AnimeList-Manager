@@ -4,6 +4,9 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import exception.StatusException;
 
 public class AnimeList {
@@ -68,4 +71,26 @@ public class AnimeList {
         return animes;
     }
     
+    //EFFECTS: Convert the whole anime list into Json object;
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        JSONArray animeArray = new JSONArray();
+        for (Anime a : animes) {
+            animeArray.put(a.toJson());
+        }
+        json.put("animes", animeArray);
+        return json;
+    }
+
+    //EFFECTS: Reconstruct the saved Json object into AnimeList;
+    public static AnimeList fromJson(JSONObject root) {
+        AnimeList list = new AnimeList();
+        JSONArray animeArray = root.getJSONArray("animes");
+        for (int i = 0; i < animeArray.length(); i++) {
+            JSONObject animeJson = animeArray.getJSONObject(i);
+            Anime anime = Anime.fromJson(animeJson);
+            list.addAnime(anime);
+        }
+        return list;
+    }
 }
