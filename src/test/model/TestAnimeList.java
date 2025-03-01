@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 
 import exception.StatusException;
 
+import org.json.JSONObject;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
 public class TestAnimeList {
@@ -121,4 +123,67 @@ public class TestAnimeList {
 
         
     }
+
+
+    @Test
+    public void testToJson() {
+        AnimeList animes = new AnimeList();
+        Anime anime1 = new Anime("Naruto",
+                Arrays.asList(AnimeType.Action, AnimeType.School),
+                YearMonth.of(2002, 10),
+                WatchStatus.Watching);
+        Anime anime2 = new Anime("Your Lie in April",
+                Arrays.asList(AnimeType.Romance, AnimeType.Tragic),
+                YearMonth.of(2014, 4),
+                WatchStatus.Completed);
+
+        animes.addAnime(anime1);
+        animes.addAnime(anime2);
+
+        JSONObject json = animes.toJson();
+
+        Assertions.assertTrue(json.has("animes"), "JSON should have 'animes' key");
+
+        Assertions.assertEquals(2, json.getJSONArray("animes").length(),
+                "Should contain 2 anime in the 'animes' array");
+
+        JSONObject firstAnimeJson = json.getJSONArray("animes").getJSONObject(0);
+        Assertions.assertEquals("Naruto", firstAnimeJson.getString("name"));
+
+        JSONObject secondAnimeJson = json.getJSONArray("animes").getJSONObject(1);
+        Assertions.assertEquals("Your Lie in April", secondAnimeJson.getString("name"));
+    }
+
+
+    @Test
+    public void testFromJson() {
+        JSONObject root = new JSONObject();
+        JSONObject anime1Json = new JSONObject();
+        anime1Json.put("name", "Naruto");
+        anime1Json.put("types", Arrays.asList("Action", "School"));
+        anime1Json.put("releaseYearMonth", "2002-10");
+        anime1Json.put("watchStatus", "Watching");
+
+        JSONObject anime2Json = new JSONObject();
+        anime2Json.put("name", "Your Lie in April");
+        anime2Json.put("types", Arrays.asList("Romance", "Tragic"));
+        anime2Json.put("releaseYearMonth", "2014-04");
+        anime2Json.put("watchStatus", "Completed");
+
+        root.put("animes", Arrays.asList(anime1Json, anime2Json));
+        AnimeList loaded = AnimeList.fromJson(root);
+
+        Anime a1 = loaded.getAnimes().get(0);
+        Assertions.assertEquals("Naruto", a1.getName());
+        Assertions.assertTrue(a1.getTypes().contains(AnimeType.Action));
+        Assertions.assertEquals(YearMonth.of(2002, 10), a1.getTime());
+        Assertions.assertEquals(WatchStatus.Watching, a1.getStatus());
+
+        Anime a2 = loaded.getAnimes().get(1);
+        Assertions.assertEquals("Your Lie in April", a2.getName());
+        Assertions.assertTrue(a2.getTypes().contains(AnimeType.Tragic));
+        Assertions.assertEquals(YearMonth.of(2014, 4), a2.getTime());
+        Assertions.assertEquals(WatchStatus.Completed, a2.getStatus());
+    }
+
 }
