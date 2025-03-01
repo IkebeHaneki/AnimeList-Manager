@@ -4,7 +4,12 @@ import model.AnimeList;
 import model.Anime;
 import model.AnimeType;
 import model.WatchStatus;
+import persistence.JsonReader;
+import persistence.JsonWriter;
 import exception.*;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -57,6 +62,12 @@ public class AnimeListConsoleUI {
             case "5":
                 updateWatchStatus();
                 break;
+            case "6":
+                saveAnimeList();
+                break;
+            case "7":
+                loadAnimeList();
+                break;
             case "0":
                 return false;
             default:
@@ -75,6 +86,8 @@ public class AnimeListConsoleUI {
         System.out.println("3. Search Anime");
         System.out.println("4. Delete Anime");
         System.out.println("5. Update Watch Status");
+        System.out.println("6. Save the Anime List");
+        System.out.println("7. Reload the saved Anime List");
         System.out.println("0. Exit");
         System.out.print("Tell me Your Choice: ");
     }
@@ -83,11 +96,11 @@ public class AnimeListConsoleUI {
     // MODIFIES: this
     private void addAnime() {
         // stub
-        System.out.println("Please enter the Anime Name ");
+        System.out.println("(ﾟ3ﾟ)～♪ Please enter the Anime Name ");
         String name = scanner.nextLine().trim();
 
         if (name.isEmpty()) {
-            System.out.println("Anime's name should not be empty!!!! The Nameless");
+            System.out.println("(ﾟ皿ﾟﾒ) Anime's name should not be empty!!!! The Nameless");
             addAnime();
         }
 
@@ -102,7 +115,7 @@ public class AnimeListConsoleUI {
             }
         }
         animeList.addAnime(anime);
-        System.out.println("Anime Added Successful!!!");
+        System.out.println("(ﾉ>ω<)ﾉ Anime Added Successful!!!");
     }
 
     // EFFECTS: represent all animes in the list
@@ -111,7 +124,7 @@ public class AnimeListConsoleUI {
         // stub
         List<Anime> animes = animeList.getAnimes();
         if (animes.isEmpty()) {
-            System.out.println("No anime in the list.");
+            System.out.println("(｡í _ ì｡) No anime in the list.");
         } else {
             System.out.println("\n=== All Anime ===");
             for (int i = 0; i < animes.size(); i++) {
@@ -173,13 +186,13 @@ public class AnimeListConsoleUI {
             System.out.println("List is empty, please add animes first!");
             return;
         }
-    
+
         System.out.print("Enter the number of the anime to update: ");
         String input = scanner.nextLine().trim();
-    
+
         int idx = Integer.parseInt(input) - 1;
         if (idx >= 0 && idx < animes.size()) {
-            String statusStr = promptStatusString(); 
+            String statusStr = promptStatusString();
             setAnimeStatus(animes.get(idx), statusStr);
         } else {
             System.out.println("Invalid index, can't find the anime!");
@@ -286,14 +299,14 @@ public class AnimeListConsoleUI {
         List<AnimeType> chosenTypes = selectMultipleTypes();
 
         if (chosenTypes.isEmpty()) {
-            System.out.println("No types selected.");
+            System.out.println("(◞‸◟) No types selected.");
             return;
         }
 
         List<Anime> results = animeList.searchByTypes(chosenTypes);
 
         if (results.isEmpty()) {
-            System.out.println("No anime found with all of these types: " + chosenTypes);
+            System.out.println("(◞‸◟) No anime found with all of these types: " + chosenTypes);
         } else {
             System.out.println("=== Search Results ===");
             for (Anime anime : results) {
@@ -315,6 +328,41 @@ public class AnimeListConsoleUI {
                 System.out.println(a);
             }
         }
+    }
+
+    // EFFECTS: save the animelist into data file as a Json document
+    private void saveAnimeList() {
+        if (animeList.getAnimes().isEmpty()) {
+            System.out.println("(`3´) No anime in the list. Please add anime before saving.");
+            return;
+        }
+
+        System.out.print("Enter the name for your anime list documentation: ");
+        String input = scanner.nextLine().trim();
+        String filePath = "./data/"+ input+ ".json";
+        JsonWriter writer = new JsonWriter(filePath);
+        try {
+            writer.open();
+            writer.write(animeList);
+            writer.close();
+            System.out.println("(*´▽`*) Your animes have been saved in " + filePath);
+        } catch (FileNotFoundException e) {
+            System.out.println("(´ﾟдﾟ`) Unable to write to file: " + filePath);
+        }
+    }
+
+    //EFFECTS: Reload my saved anime list
+    private void loadAnimeList(){
+        System.out.print("Enter the file's name that you want to reload: ");
+        String input = scanner.nextLine().trim();
+        String filePath = "./data/"+ input +".json";
+        JsonReader reader = new JsonReader(filePath);
+    try {
+        System.out.println("(*´▽`*) Successfully loaded anime list from " + filePath);
+        this.animeList = reader.read();
+    } catch (IOException e) {
+        System.out.println("( ´･ω) Unable to read from file: " + filePath);
+    }
     }
 
 }
