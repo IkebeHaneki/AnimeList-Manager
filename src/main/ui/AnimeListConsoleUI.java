@@ -40,7 +40,7 @@ public class AnimeListConsoleUI {
             String choice = scanner.nextLine().trim();
             keepGoing = handleUserChoice(choice);
         }
-        System.out.println("You want exit? OK, byebye!!");
+        System.out.println("You want exit? OK, byebye!! (*´ω`)人(´ω`*)");
     }
 
     // EFFECTS: handle users choice to do functions on the application
