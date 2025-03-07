@@ -339,7 +339,7 @@ public class AnimeListConsoleUI {
 
         System.out.print("Enter the name for your anime list documentation: ");
         String input = scanner.nextLine().trim();
-        String filePath = "./data/"+ input+ ".json";
+        String filePath = "./data/" + input + ".json";
         JsonWriter writer = new JsonWriter(filePath);
         try {
             writer.open();
@@ -351,18 +351,18 @@ public class AnimeListConsoleUI {
         }
     }
 
-    //EFFECTS: Reload my saved anime list
-    private void loadAnimeList(){
+    // EFFECTS: Reload my saved anime list
+    private void loadAnimeList() {
         System.out.print("Enter the file's name that you want to reload: ");
         String input = scanner.nextLine().trim();
-        String filePath = "./data/"+ input +".json";
+        String filePath = "./data/" + input + ".json";
         JsonReader reader = new JsonReader(filePath);
-    try {
-        System.out.println("(*´▽`*) Successfully loaded anime list from " + filePath);
-        this.animeList = reader.read();
-    } catch (IOException e) {
-        System.out.println("( ´･ω) Unable to read from file: " + filePath);
-    }
+        try {
+            System.out.println("(*´▽`*) Successfully loaded anime list from " + filePath);
+            this.animeList = reader.read();
+        } catch (IOException e) {
+            System.out.println("( ´･ω) Unable to read from file: " + filePath);
+        }
     }
 
 }

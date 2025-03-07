@@ -115,7 +115,7 @@ public class Anime {
         return json;
     }
 
-    //EFFECTS:Reconstruct Animes from a Json Object;
+    // EFFECTS:Reconstruct Animes from a Json Object;
     public static Anime fromJson(JSONObject json) {
         String name = json.getString("name");
 

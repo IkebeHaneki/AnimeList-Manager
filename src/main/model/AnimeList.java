@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import exception.StatusException;
 
+// represents a list of Anime
 public class AnimeList {
 
     private List<Anime> animes;

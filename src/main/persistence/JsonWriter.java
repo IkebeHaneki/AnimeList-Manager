@@ -19,7 +19,8 @@ public class JsonWriter {
     }
 
     // MODIFIES: this
-    // EFFECTS: opens writer; throws FileNotFoundException if destination file cannot
+    // EFFECTS: opens writer; throws FileNotFoundException if destination file
+    // cannot
     // be opened for writing
     public void open() throws FileNotFoundException {
         writer = new PrintWriter(filePath);
@@ -29,7 +30,7 @@ public class JsonWriter {
     // EFFECTS: writes JSON representation of json object to file
     public void write(AnimeList list) {
         JSONObject json = list.toJson();
-        saveToFile(json.toString(TAB)); 
+        saveToFile(json.toString(TAB));
     }
 
     // MODIFIES: this
@@ -38,12 +39,10 @@ public class JsonWriter {
         writer.close();
     }
 
-
     // MODIFIES: this
     // EFFECTS: writes string to file
     private void saveToFile(String json) {
         writer.print(json);
     }
-
 
 }
