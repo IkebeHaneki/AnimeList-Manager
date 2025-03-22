@@ -20,6 +20,19 @@ import java.util.*;
 public class AnimeListConsoleUI {
     private Scanner scanner;
     private AnimeList animeList;
+    private Map<String, Runnable> menuCommands;
+
+    private void initCommands() {
+        menuCommands = new HashMap<>();
+        menuCommands.put("1", this::addAnime);
+        menuCommands.put("2", this::viewAllAnime);
+        menuCommands.put("3", this::searchAnime);
+        menuCommands.put("4", this::deleteAnime);
+        menuCommands.put("5", this::updateWatchStatus);
+        menuCommands.put("6", this::saveAnimeList);
+        menuCommands.put("7", this::loadAnimeList);
+        // Add more if needed
+    }
 
     // EFFECTS: construct the ui and start the users menu
     public AnimeListConsoleUI() {
@@ -34,6 +47,7 @@ public class AnimeListConsoleUI {
 
     private void runApp() {
         // stub
+        initCommands();
         boolean keepGoing = true;
         while (keepGoing) {
             displayMenu();
@@ -45,33 +59,14 @@ public class AnimeListConsoleUI {
 
     // EFFECTS: handle users choice to do functions on the application
     private boolean handleUserChoice(String choice) {
-        // return true; //stub
-        switch (choice) {
-            case "1":
-                addAnime();
-                break;
-            case "2":
-                viewAllAnime();
-                break;
-            case "3":
-                searchAnime();
-                break;
-            case "4":
-                deleteAnime();
-                break;
-            case "5":
-                updateWatchStatus();
-                break;
-            case "6":
-                saveAnimeList();
-                break;
-            case "7":
-                loadAnimeList();
-                break;
-            case "0":
-                return false;
-            default:
-                System.out.println("What you just typed in? Choose a valid number pls!!");
+        if ("x".equals(choice)) {
+            return false; // user wants to exit
+        }
+        Runnable command = menuCommands.get(choice);
+        if (command == null) {
+            System.out.println("What you just typed in? Choose a valid number pls!");
+        } else {
+            command.run();
         }
         return true;
     }
