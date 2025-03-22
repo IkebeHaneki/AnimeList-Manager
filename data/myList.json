@@ -1,0 +1,49 @@
+{"animes": [
+    {
+        "types": [
+            "School",
+            "Romance"
+        ],
+        "watchStatus": "Watching",
+        "name": "Your Name",
+        "releaseYearMonth": "2000-12"
+    },
+    {
+        "types": [
+            "Action",
+            "Adventure"
+        ],
+        "watchStatus": "Completed",
+        "name": "123",
+        "releaseYearMonth": "2000-10"
+    },
+    {
+        "types": [
+            "Fantasy",
+            "Romance"
+        ],
+        "watchStatus": "Watching",
+        "name": "anime",
+        "releaseYearMonth": "2004-04"
+    },
+    {
+        "types": [
+            "Action",
+            "Tragic",
+            "Adventure"
+        ],
+        "watchStatus": "Completed",
+        "name": "Arknights S1",
+        "releaseYearMonth": "2020-09"
+    },
+    {
+        "types": [
+            "Action",
+            "Fantasy",
+            "Adventure"
+        ],
+        "watchStatus": "Plan_to_watch",
+        "name": "JOJO",
+        "releaseYearMonth": "2016-05"
+    }
+]}
