@@ -27,3 +27,4 @@
 - As a user, I want to reload my saved animelist when I want.
 - As a user, I want to save multiple animelists when I need.
 - As a user, I want to choose which animelist to be reload when I need.
+- As a user, I want to see stat about my anime list by the types.
