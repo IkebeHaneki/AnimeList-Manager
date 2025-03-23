@@ -28,3 +28,14 @@
 - As a user, I want to save multiple animelists when I need.
 - As a user, I want to choose which animelist to be reload when I need.
 - As a user, I want to see stat about my anime list by the types.
+
+
+
+# Instructions for End User
+- You can click **Add Anime** button and enter the anime's name,time,choose the types and watch status, then it will be in the list.
+- You can click **Search** button to search anime in your list by time or types(Your choice!), then click **OK** to see the result in new dialog.
+- You can click **Update Status** button to update your chosed anime's watch status in your list.
+- You can click **Save** and enter the file name that you want to save. Your list will saved as Json document. ATTENTION: Your list must **NOT BE** empty!!
+- You can click **Reload** to reload your list by entering the file name that you want to reload.
+- You can click **Remove Anime** to remove the anime from you list. Just click the anime you want remove, then click the button below.
+- You can click **Show Stats** to see a barchart about how many animes you have by each type.
