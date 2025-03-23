@@ -18,10 +18,10 @@ public class ChartPanel extends JPanel {
     private Map<AnimeType, Integer> counts;
     private int maxCount;
 
-    //REQUIRES: c != null
-    //MODIFIES:this
-    //EFFECTS:Constructs a chart panel given a map of AnimeType -> count.
-    public ChartPanel(Map<AnimeType,Integer> c) {
+    // REQUIRES: c != null
+    // MODIFIES:this
+    // EFFECTS:Constructs a chart panel given a map of AnimeType -> count.
+    public ChartPanel(Map<AnimeType, Integer> c) {
         counts = c;
         maxCount = 0;
         for (int v : counts.values()) {
@@ -32,8 +32,8 @@ public class ChartPanel extends JPanel {
         setPreferredSize(new Dimension(400, 300));
     }
 
-    //MODIFIES: g
-    //EFFECTS:Paints the bar chart, including axes and bars for each AnimeType
+    // MODIFIES: g
+    // EFFECTS:Paints the bar chart, including axes and bars for each AnimeType
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -42,13 +42,13 @@ public class ChartPanel extends JPanel {
         int yyy = getHeight() - BOTTOM;
         g.setColor(Color.BLACK);
         g.drawLine(LEFT, yyy, LEFT + w, yyy); // x-axis
-        g.drawLine(LEFT, yyy, LEFT, TOP);       // y-axis
+        g.drawLine(LEFT, yyy, LEFT, TOP); // y-axis
         drawYAxisTicks(g, w, h, yyy);
         drawBars(g, w, h, yyy);
     }
 
-    //MODIFIES:g
-    //EFFECTS:Draws tick marks and numeric labels along the y-axis
+    // MODIFIES:g
+    // EFFECTS:Draws tick marks and numeric labels along the y-axis
     private void drawYAxisTicks(Graphics g, int w, int h, int yy) {
         for (int j = 0; j <= maxCount; j++) {
             int tickY = yy - (maxCount == 0 ? 0 : j * h / maxCount);
@@ -57,8 +57,9 @@ public class ChartPanel extends JPanel {
         }
     }
 
-    //MODIFIES:g
-    //EFFECTS:Draws each bar for the corresponding AnimeType and label the count on the top of bar
+    // MODIFIES:g
+    // EFFECTS:Draws each bar for the corresponding AnimeType and label the count on
+    // the top of bar
     private void drawBars(Graphics g, int w, int h, int base) {
         int i = 0;
         for (AnimeType t : counts.keySet()) {

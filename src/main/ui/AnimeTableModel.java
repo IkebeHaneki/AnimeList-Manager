@@ -13,33 +13,32 @@ public class AnimeTableModel extends AbstractTableModel {
     private List<Anime> animes;
     private final DateTimeFormatter fm = DateTimeFormatter.ofPattern("yyyy-MM");
 
-    //MODIFIES:this
-    //EFFECTS:Constructs a new table with give anime list
+    // MODIFIES:this
+    // EFFECTS:Constructs a new table with give anime list
     public AnimeTableModel(List<Anime> animes) {
         this.animes = animes;
     }
 
-    //EFFECTS:Returns the number of rows (size of animes list).
+    // EFFECTS:Returns the number of rows (size of animes list).
     @Override
     public int getRowCount() {
         return animes.size();
     }
 
-    //EFFECTS:Returns the number of columns
+    // EFFECTS:Returns the number of columns
     @Override
     public int getColumnCount() {
         return COLS.length;
     }
 
-
-     //REQUIRES: 0<= int <= 3
-    //EFFECTS:Returns the name of the column at the given index
+    // REQUIRES: 0<= int <= 3
+    // EFFECTS:Returns the name of the column at the given index
     @Override
     public String getColumnName(int col) {
         return COLS[col];
     }
 
-    //EFFECTS:Returns the value to display
+    // EFFECTS:Returns the value to display
     @Override
     public Object getValueAt(int row, int col) {
         Anime a = animes.get(row);
@@ -59,15 +58,16 @@ public class AnimeTableModel extends AbstractTableModel {
         }
     }
 
-    //REQUIRES: list != null
-    //EFFECTS:Replaces the current list of animes with the given list and notifies the table that data changed.
+    // REQUIRES: list != null
+    // EFFECTS:Replaces the current list of animes with the given list and notifies
+    // the table that data changed.
     public void setAnimes(List<Anime> list) {
         animes = list;
         fireTableDataChanged();
     }
 
-    //REQUIRES: 0 <= row < 4
-    //EFFECTS:Returns the Anime object at the given row index.
+    // REQUIRES: 0 <= row < 4
+    // EFFECTS:Returns the Anime object at the given row index.
     public Anime getAnimeAt(int row) {
         return animes.get(row);
     }

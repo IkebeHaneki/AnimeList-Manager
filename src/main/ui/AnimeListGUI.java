@@ -274,24 +274,23 @@ public class AnimeListGUI extends JFrame {
         }
     }
 
-    //MODIFIES:this
-    //EFFECTS:Shows an error dialog that no anime is selected
+    // MODIFIES:this
+    // EFFECTS:Shows an error dialog that no anime is selected
     private void showNoAnimeSelected() {
         JOptionPane.showMessageDialog(this, "No anime selected!");
     }
 
-    //REQUIRES: current != null
-    //EFFECTS:Opens an input dialog for selecting a new WatchStatus
+    // REQUIRES: current != null
+    // EFFECTS:Opens an input dialog for selecting a new WatchStatus
     private WatchStatus promptWatchStatus(WatchStatus current) {
         return (WatchStatus) JOptionPane.showInputDialog(
-            this,
-            "Select new watch status:",
-            "Update Status",
-            JOptionPane.PLAIN_MESSAGE,
-            null,
-            WatchStatus.values(),
-            current
-        );
+                this,
+                "Select new watch status:",
+                "Update Status",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                WatchStatus.values(),
+                current);
     }
 
     // EFFECTS:Saves the current list to ./data/<filename>.json.
