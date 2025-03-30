@@ -74,3 +74,6 @@ Updated status of Mujica to Plan_to_watch
 Sat Mar 29 17:27:32 PDT 2025
 Removed anime: Mujica
 
+## Phase 4: Task 3
+- One refactoring I would consider is decoupling the event logging from the core model logic. Currently, methods like addAnime and updateStatus directly call EventLog.getInstance().logEvent(...), which ties the model to a specific logging mechanism. Using an Observer which shown in Alarm file in Edx would allow the model to notify listeners of changes without directly coupling to a logging system, making the code more modular and easier to test or extend.
+- Another improvement would be to separate UI concerns. Right now, the AnimeListGUI handles both presentation and business logic. Introducing a controller layer to mediate between the view and the model would simplify maintenance and make it easier to update the UI without affecting the model.
