@@ -39,3 +39,38 @@
 - You can click **Reload** to reload your list by entering the file name that you want to reload.
 - You can click **Remove Anime** to remove the anime from you list. Just click the anime you want remove, then click the button below.
 - You can click **Show Stats** to see a barchart about how many animes you have by each type.
+
+
+
+## Phase 4: Task 2
+EVENT LOG:
+Sat Mar 29 17:27:16 PDT 2025
+Added anime: Your Name
+
+Sat Mar 29 17:27:16 PDT 2025
+Added anime: 123
+
+Sat Mar 29 17:27:16 PDT 2025
+Added anime: anime
+
+Sat Mar 29 17:27:16 PDT 2025
+Added anime: Arknights S1
+
+Sat Mar 29 17:27:16 PDT 2025
+Added anime: JOJO
+
+Sat Mar 29 17:27:16 PDT 2025
+Added anime: Hajimi
+
+Sat Mar 29 17:27:16 PDT 2025
+Added anime: Mujica
+
+Sat Mar 29 17:27:23 PDT 2025
+Updated status of Mujica to Completed
+
+Sat Mar 29 17:27:27 PDT 2025
+Updated status of Mujica to Plan_to_watch
+
+Sat Mar 29 17:27:32 PDT 2025
+Removed anime: Mujica
+

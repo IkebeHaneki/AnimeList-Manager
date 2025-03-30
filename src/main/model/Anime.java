@@ -73,7 +73,8 @@ public class Anime {
     // EFFECTS:Set the watch status of the anime
     // MODIFIES: this
     public void setStatus(String watchstatus) throws StatusException {
-        switch (watchstatus.toLowerCase()) {
+        String normalized = watchstatus.replace("_", " ").toLowerCase();
+        switch (normalized) {
             case "watching":
                 this.watchstatus = WatchStatus.Watching;
                 break;

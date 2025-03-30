@@ -13,30 +13,32 @@ import exception.StatusException;
 public class AnimeList {
 
     private List<Anime> animes;
-    
-    //EFFECT:creates a new list that no anime contained
-    //MODIFIES:this
-    
+
+    // EFFECT:creates a new list that no anime contained
+    // MODIFIES:this
+
     public AnimeList() {
         this.animes = new ArrayList<>();
     }
 
-    
-    //EFFECTS:add the anime into the anime list
+    // EFFECTS:add the anime into the anime list
     public void addAnime(Anime anime) {
-        //stub
+        // stub
         animes.add(anime);
+        EventLog.getInstance().logEvent(
+                new Event("Added anime: " + anime.getName()));
     }
 
-    //EFFECTS: remove the anime from the list
+    // EFFECTS: remove the anime from the list
     public void removeAnime(Anime anime) {
-        //stub
+        // stub
         animes.remove(anime);
+        EventLog.getInstance().logEvent(
+                new Event("Removed anime: " + anime.getName()));
     }
-    
-    
-    //EFFECTES: Return the list of anime which contains the types chosen by user
-    
+
+    // EFFECTES: Return the list of anime which contains the types chosen by user
+
     public List<Anime> searchByTypes(List<AnimeType> types) {
         List<Anime> result = new ArrayList<>();
         for (Anime anime : animes) {
@@ -47,7 +49,7 @@ public class AnimeList {
         return result;
     }
 
-    //EFFECTS: Search the animes that users want by the release year and month
+    // EFFECTS: Search the animes that users want by the release year and month
     public List<Anime> searchByTime(YearMonth time) {
         List<Anime> result = new ArrayList<>();
         for (Anime anime : animes) {
@@ -58,21 +60,23 @@ public class AnimeList {
         return result;
     }
 
-    //EFFECTS:update the anime status when it alrady added in the list
-    //REQUIRE: anime should already in the list
-    
+    // EFFECTS:update the anime status when it alrady added in the list
+    // REQUIRE: anime should already in the list
+
     public void updateStatus(Anime anime, String status) throws StatusException {
         if (animes.contains(anime)) {
             anime.setStatus(status);
         }
+        EventLog.getInstance().logEvent(
+                new Event("Updated status of " + anime.getName() + " to " + status));
     }
 
-    //EFFECT: return the anime list
+    // EFFECT: return the anime list
     public List<Anime> getAnimes() {
         return animes;
     }
-    
-    //EFFECTS: Convert the whole anime list into Json object;
+
+    // EFFECTS: Convert the whole anime list into Json object;
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
         JSONArray animeArray = new JSONArray();
@@ -83,7 +87,7 @@ public class AnimeList {
         return json;
     }
 
-    //EFFECTS: Reconstruct the saved Json object into AnimeList;
+    // EFFECTS: Reconstruct the saved Json object into AnimeList;
     public static AnimeList fromJson(JSONObject root) {
         AnimeList list = new AnimeList();
         JSONArray animeArray = root.getJSONArray("animes");

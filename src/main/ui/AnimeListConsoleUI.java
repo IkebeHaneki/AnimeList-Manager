@@ -16,7 +16,6 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 
 //EFFECTS:represent a user interface for the Anime List Manager
-
 public class AnimeListConsoleUI {
     private Scanner scanner;
     private AnimeList animeList;

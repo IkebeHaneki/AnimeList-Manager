@@ -3,6 +3,8 @@ package ui;
 import model.Anime;
 import model.AnimeList;
 import model.AnimeType;
+import model.Event;
+import model.EventLog;
 import model.WatchStatus;
 import persistence.JsonReader;
 import persistence.JsonWriter;
@@ -14,18 +16,20 @@ import java.time.YearMonth;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * Represents the main GUI for the Anime List Manager application.
- * <p>
  * This class uses Java Swing to provide a window where users can:
- * <li>Add new Anime entries
- * <li>Remove selected Anime entries
- * <li>Search for Anime by release date or multiple types
- * <li>Save the current list to a user-specified JSON file
- * <li>Load a previously saved list from a user-specified JSON file
+ * Add new Anime entries
+ * Remove selected Anime entries
+ * Search for Anime by release date or multiple types
+ * Save the current list to a user-specified JSON file
+ * Load a previously saved list from a user-specified JSON file
  * Additionally, it attempts to load a custom icon for the window.
  */
 
@@ -69,6 +73,12 @@ public class AnimeListGUI extends JFrame {
         tableModel = new AnimeTableModel(animeList.getAnimes());
         table = new JTable(tableModel);
         initUI();
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                printEventLog();
+            }
+        });
         setVisible(true);
 
     }
@@ -258,16 +268,17 @@ public class AnimeListGUI extends JFrame {
             return;
         }
         Anime a = tableModel.getAnimeAt(row);
-        WatchStatus newSt = promptWatchStatus(a.getStatus());
+        WatchStatus currentStatus = a.getStatus();
+        WatchStatus newSt = promptWatchStatus(currentStatus);
         if (newSt == null) {
-            return; // user canceled
+            return;
         }
-        if (newSt == a.getStatus()) {
+        if (newSt.equals(currentStatus)) {
             JOptionPane.showMessageDialog(this, "You chose the same status. No change made!");
             return;
         }
         try {
-            a.setStatus(newSt.name());
+            animeList.updateStatus(a, newSt.name());
             tableModel.setAnimes(animeList.getAnimes());
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
@@ -475,6 +486,21 @@ public class AnimeListGUI extends JFrame {
             }
         }
         return map;
+    }
+
+    private void printEventLog() {
+        EventLog log = EventLog.getInstance();
+        Iterator<Event> it = log.iterator();
+        if (!it.hasNext()) {
+            System.out.println("No events were logged.");
+        } else {
+            System.out.println("EVENT LOG:");
+            while (it.hasNext()) {
+                Event e = it.next();
+                System.out.println(e.toString());
+                System.out.println();
+            }
+        }
     }
 
 }
