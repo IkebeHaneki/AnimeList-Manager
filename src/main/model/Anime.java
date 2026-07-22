@@ -1,135 +1,115 @@
 package model;
 
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import exception.StatusException;
 
-// Represents an Anime having a name, list of types(genres), 
-// and its release date(yyyy-MM), watch status
+// Represents an anime with a name, genres, release month, and watch status.
 public class Anime {
-    private String name; // name of the anime
-    private List<AnimeType> types; // list of anime types or genres
-    private YearMonth yearMonth; // the release date
-    private WatchStatus watchstatus; // the watch status
+    private String name;
+    private List<AnimeType> types;
+    private YearMonth yearMonth;
+    private WatchStatus watchStatus;
 
-    /*
-     * EFFECTS: name of the anime is set to name;
-     * Anime types is a list that never be null;
-     * YearMonth is the release date of anime, in format of yyyy-MM.
-     * Watch Status is the status of the anime(Watching, Completed, Plan to Watch)
-     */
-
-    public Anime(String name, List<AnimeType> types, YearMonth yearMonth, WatchStatus watchstatus) {
-        // stub
-        this.name = name;
-        this.types = types;
-        this.yearMonth = yearMonth;
-        this.watchstatus = watchstatus;
+    public Anime(String name, List<AnimeType> types, YearMonth yearMonth, WatchStatus watchStatus) {
+        setName(name);
+        setTypes(types);
+        setTime(yearMonth);
+        setStatus(watchStatus);
     }
 
-    // EFFECTS: return the name of the anime
     public String getName() {
         return name;
     }
 
-    // MODIFIES:this
-    // EFFECTS:Change the anime's name to the given name
     public void setName(String name) {
-        this.name = name;
+        String normalized = Objects.requireNonNull(name, "name").trim();
+        if (normalized.isEmpty()) {
+            throw new IllegalArgumentException("Anime name cannot be empty.");
+        }
+        this.name = normalized;
     }
 
-    // EFFECTS:return the list of types of the anime
     public List<AnimeType> getTypes() {
-        return types;
+        return Collections.unmodifiableList(types);
     }
 
-    // MODIFIES:this
-    // EFFECTS:set the list of types for anime
     public void setTypes(List<AnimeType> types) {
-        this.types = types;
+        Objects.requireNonNull(types, "types");
+        if (types.isEmpty()) {
+            throw new IllegalArgumentException("Anime must have at least one type.");
+        }
+        if (types.stream().anyMatch(Objects::isNull)) {
+            throw new IllegalArgumentException("Anime types cannot contain null.");
+        }
+        this.types = new ArrayList<>(types);
     }
 
-    // EFFECTS:Get the release date and month of the anime
     public YearMonth getTime() {
         return yearMonth;
     }
 
-    // EFFECTS: Set the release year and month for the anime
-    // MODIFIES:this
     public void setTime(String time) {
-        this.yearMonth = java.time.YearMonth.parse(time, java.time.format.DateTimeFormatter.ofPattern("yyyy-MM"));
+        setTime(YearMonth.parse(time, DateTimeFormatter.ofPattern("yyyy-MM")));
     }
 
-    // EFFECTS: Get the watch status of the anime
+    public void setTime(YearMonth yearMonth) {
+        this.yearMonth = Objects.requireNonNull(yearMonth, "yearMonth");
+    }
+
     public WatchStatus getStatus() {
-        return watchstatus;
+        return watchStatus;
     }
 
-    // EFFECTS:Set the watch status of the anime
-    // MODIFIES: this
-    public void setStatus(String watchstatus) throws StatusException {
-        String normalized = watchstatus.replace("_", " ").toLowerCase();
-        switch (normalized) {
-            case "watching":
-                this.watchstatus = WatchStatus.Watching;
-                break;
-            case "completed":
-                this.watchstatus = WatchStatus.Completed;
-                break;
-            case "plan to watch":
-                this.watchstatus = WatchStatus.Plan_to_watch;
-                break;
-            default:
-                throw new StatusException();
-        }
+    public void setStatus(WatchStatus watchStatus) {
+        this.watchStatus = Objects.requireNonNull(watchStatus, "watchStatus");
+    }
+
+    public void setStatus(String watchStatus) throws StatusException {
+        setStatus(WatchStatus.fromInput(watchStatus));
     }
 
     @Override
-    // EFFECTS: returns a string representation of Anime
     public String toString() {
         return "Anime [name=" + name
                 + ", types=" + types
                 + ", releaseYearMonth=" + yearMonth
-                + ", watchStatus=" + watchstatus + "]";
+                + ", watchStatus=" + watchStatus + "]";
     }
 
-    // EFFECTS: Convert the anime to a Json readable object.
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
         json.put("name", name);
 
         JSONArray typesArray = new JSONArray();
-        for (AnimeType t : types) {
-            typesArray.put(t.name());
+        for (AnimeType type : types) {
+            typesArray.put(type.name());
         }
         json.put("types", typesArray);
-
         json.put("releaseYearMonth", yearMonth.toString());
-
-        json.put("watchStatus", watchstatus.name());
-
+        json.put("watchStatus", watchStatus.name());
         return json;
     }
 
-    // EFFECTS:Reconstruct Animes from a Json Object;
     public static Anime fromJson(JSONObject json) {
         String name = json.getString("name");
 
         List<AnimeType> typesList = new ArrayList<>();
         JSONArray typesArray = json.getJSONArray("types");
         for (int i = 0; i < typesArray.length(); i++) {
-            String typeStr = typesArray.getString(i);
-            typesList.add(AnimeType.valueOf(typeStr));
+            typesList.add(AnimeType.valueOf(typesArray.getString(i)));
         }
 
-        YearMonth ym = YearMonth.parse(json.getString("releaseYearMonth"));
-        WatchStatus ws = WatchStatus.valueOf(json.getString("watchStatus"));
-
-        return new Anime(name, typesList, ym, ws);
+        YearMonth releaseDate = YearMonth.parse(json.getString("releaseYearMonth"));
+        WatchStatus status = WatchStatus.valueOf(json.getString("watchStatus"));
+        return new Anime(name, typesList, releaseDate, status);
     }
 }
