@@ -1,1 +1,10 @@
 *.class
+*.iml
+.idea/
+.vscode/
+target/
+out/
+build/
+.gradle/
+.DS_Store
+data/*.json

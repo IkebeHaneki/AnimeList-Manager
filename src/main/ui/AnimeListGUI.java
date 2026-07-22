@@ -8,10 +8,12 @@ import model.EventLog;
 import model.WatchStatus;
 import persistence.JsonReader;
 import persistence.JsonWriter;
+import persistence.SafeFilePaths;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.time.YearMonth;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -215,6 +217,10 @@ public class AnimeListGUI extends JFrame {
             return;
         }
         List<AnimeType> chosen = gatherAddTypes();
+        if (chosen.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Select at least one type.");
+            return;
+        }
         try {
             YearMonth ym = YearMonth.parse(d);
             animeList.addAnime(new Anime(n, chosen, ym, st));
@@ -278,7 +284,7 @@ public class AnimeListGUI extends JFrame {
             return;
         }
         try {
-            animeList.updateStatus(a, newSt.name());
+            animeList.updateStatus(a, newSt);
             tableModel.setAnimes(animeList.getAnimes());
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
@@ -314,15 +320,12 @@ public class AnimeListGUI extends JFrame {
         if (in == null || in.trim().isEmpty()) {
             return;
         }
-        String fp = "./data/" + in.trim() + ".json";
         try {
-            JsonWriter w = new JsonWriter(fp);
-            w.open();
-            w.write(animeList);
-            w.close();
-            JOptionPane.showMessageDialog(this, "Saved to " + fp);
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "Cannot write to: " + fp);
+            Path file = SafeFilePaths.resolveDataFile(in);
+            new JsonWriter(file.toString()).write(animeList);
+            JOptionPane.showMessageDialog(this, "Saved to " + file);
+        } catch (IOException | IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this, "Cannot save file: " + ex.getMessage());
         }
     }
 
@@ -333,13 +336,13 @@ public class AnimeListGUI extends JFrame {
         if (in == null || in.trim().isEmpty()) {
             return;
         }
-        String fp = "./data/" + in.trim() + ".json";
         try {
-            animeList = new JsonReader(fp).read();
+            Path file = SafeFilePaths.resolveDataFile(in);
+            animeList = new JsonReader(file.toString()).read();
             tableModel.setAnimes(animeList.getAnimes());
-            JOptionPane.showMessageDialog(this, "Loaded from " + fp);
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "Cannot read from: " + fp);
+            JOptionPane.showMessageDialog(this, "Loaded from " + file);
+        } catch (IOException | IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this, "Cannot load file: " + ex.getMessage());
         }
     }
 

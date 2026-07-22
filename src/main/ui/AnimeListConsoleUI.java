@@ -1,28 +1,39 @@
 package ui;
 
-import model.AnimeList;
+import exception.StatusException;
 import model.Anime;
+import model.AnimeList;
 import model.AnimeType;
 import model.WatchStatus;
 import persistence.JsonReader;
 import persistence.JsonWriter;
-import exception.*;
+import persistence.SafeFilePaths;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
-//EFFECTS:represent a user interface for the Anime List Manager
+// Console interface for the Anime List Manager.
 public class AnimeListConsoleUI {
-    private Scanner scanner;
+    private final Scanner scanner;
     private AnimeList animeList;
-    private Map<String, Runnable> menuCommands;
+    private final Map<String, Runnable> menuCommands;
 
-    private void initCommands() {
+    public AnimeListConsoleUI() {
+        scanner = new Scanner(System.in);
+        animeList = new AnimeList();
         menuCommands = new HashMap<>();
+        initializeCommands();
+        runApp();
+    }
+
+    private void initializeCommands() {
         menuCommands.put("1", this::addAnime);
         menuCommands.put("2", this::viewAllAnime);
         menuCommands.put("3", this::searchAnime);
@@ -30,333 +41,237 @@ public class AnimeListConsoleUI {
         menuCommands.put("5", this::updateWatchStatus);
         menuCommands.put("6", this::saveAnimeList);
         menuCommands.put("7", this::loadAnimeList);
-        // Add more if needed
     }
-
-    // EFFECTS: construct the ui and start the users menu
-    public AnimeListConsoleUI() {
-        // stub
-        scanner = new Scanner(System.in);
-        animeList = new AnimeList();
-        scanner.useDelimiter("\r?\n|\r");
-        runApp();
-
-    }
-    // EFFECTS:run the main menu loop until users exit.
 
     private void runApp() {
-        // stub
-        initCommands();
         boolean keepGoing = true;
         while (keepGoing) {
             displayMenu();
-            String choice = scanner.nextLine().trim();
-            keepGoing = handleUserChoice(choice);
+            keepGoing = handleUserChoice(scanner.nextLine().trim());
         }
-        System.out.println("You want exit? OK, byebye!! (*´ω`)人(´ω`*)");
+        System.out.println("Goodbye!");
     }
 
-    // EFFECTS: handle users choice to do functions on the application
     private boolean handleUserChoice(String choice) {
-        if ("x".equals(choice)) {
-            return false; // user wants to exit
+        if ("0".equals(choice) || "x".equalsIgnoreCase(choice) || "exit".equalsIgnoreCase(choice)) {
+            return false;
         }
+
         Runnable command = menuCommands.get(choice);
         if (command == null) {
-            System.out.println("What you just typed in? Choose a valid number pls!");
+            System.out.println("Choose a valid menu number.");
         } else {
             command.run();
         }
         return true;
     }
 
-    // EFFECTS: display the users menu loop
-
     private void displayMenu() {
-        // stub
-        System.out.println("\n This is Anime List Manager, Ciallo~(∠・ω< )⌒☆");
+        System.out.println("\nAnime List Manager");
         System.out.println("1. Add Anime");
-        System.out.println("2. View All Animes");
+        System.out.println("2. View All Anime");
         System.out.println("3. Search Anime");
         System.out.println("4. Delete Anime");
         System.out.println("5. Update Watch Status");
-        System.out.println("6. Save the Anime List");
-        System.out.println("7. Reload the saved Anime List");
+        System.out.println("6. Save Anime List");
+        System.out.println("7. Load Anime List");
         System.out.println("0. Exit");
-        System.out.print("Tell me Your Choice: ");
-    }
-
-    // EFFECTS: add a new anime(name,types, release time, status) to the anime list
-    // MODIFIES: this
-    private void addAnime() {
-        // stub
-        System.out.println("(ﾟ3ﾟ)～♪ Please enter the Anime Name ");
-        String name = scanner.nextLine().trim();
-
-        if (name.isEmpty()) {
-            System.out.println("(ﾟ皿ﾟﾒ) Anime's name should not be empty!!!! The Nameless");
-            addAnime();
-        }
-
-        List<AnimeType> types = selectMultipleTypes();
-        YearMonth ym = promptYearMonth();
-        Anime anime = new Anime(name, types, ym, null);
-        while (true) {
-            String statusStr = promptStatusString();
-            boolean validStatus = setAnimeStatus(anime, statusStr);
-            if (validStatus) {
-                break;
-            }
-        }
-        animeList.addAnime(anime);
-        System.out.println("(ﾉ>ω<)ﾉ Anime Added Successful!!!");
-    }
-
-    // EFFECTS: represent all animes in the list
-
-    private void viewAllAnime() {
-        // stub
-        List<Anime> animes = animeList.getAnimes();
-        if (animes.isEmpty()) {
-            System.out.println("(｡í _ ì｡) No anime in the list.");
-        } else {
-            System.out.println("\n=== All Anime ===");
-            for (int i = 0; i < animes.size(); i++) {
-                System.out.println((i + 1) + ". " + animes.get(i));
-            }
-        }
-    }
-
-    // EFFECTS: Let users to choose the way to search anime from the list.
-
-    private void searchAnime() {
-        // stub
-        if (animeList.getAnimes().isEmpty()) {
-            System.out.println("If you want search, there must have things right? Add Animes First!!!");
-            return;
-        }
-
-        System.out.println("Choose the method you want to search!");
-        System.out.println("Enter 1 to search By Types");
-        System.out.println("Enter 2 to search By Time");
-        System.out.println("Tell me Your Choice: ");
-        String choice = scanner.nextLine().trim();
-        if (choice.equals("1")) {
-            searchByMultipleTypes();
-        } else if (choice.equals("2")) {
-            searchByTime();
-        } else {
-            System.out.println("Invalid Choice!!! Please Try Again");
-            searchAnime();
-        }
-    }
-
-    // EFFECTS: delete the anime that users want to remove from the list
-    // MODEFIES:this
-    private void deleteAnime() {
-        // stub
-        viewAllAnime();
-        List<Anime> animes = animeList.getAnimes();
-        if (animes.isEmpty()) {
-            System.out.println("List is empty, please add animes first!");
-            return;
-        }
-        System.out.print("Number to delete: ");
-        int index = Integer.parseInt(scanner.nextLine().trim()) - 1;
-        if (index >= 0 && index < animes.size()) {
-            animeList.removeAnime(animes.get(index));
-            System.out.println("Anime Deleted!");
-        } else {
-            System.out.println("Invalid index.");
-        }
-    }
-
-    // EFFECTS: change the watch status of the anime that users want to change.
-    // MODIFIES:this
-    private void updateWatchStatus() {
-        viewAllAnime();
-        List<Anime> animes = animeList.getAnimes();
-        if (animes.isEmpty()) {
-            System.out.println("List is empty, please add animes first!");
-            return;
-        }
-
-        System.out.print("Enter the number of the anime to update: ");
-        String input = scanner.nextLine().trim();
-
-        int idx = Integer.parseInt(input) - 1;
-        if (idx >= 0 && idx < animes.size()) {
-            String statusStr = promptStatusString();
-            setAnimeStatus(animes.get(idx), statusStr);
-        } else {
-            System.out.println("Invalid index, can't find the anime!");
-            updateWatchStatus();
-        }
-    }
-
-    // EFFECTS: help users to choose multiple types for creating new anime or search
-    // anime.
-    private List<AnimeType> selectMultipleTypes() {
-        // return null; //stub
-        List<AnimeType> chosen = new ArrayList<>();
-        while (true) {
-            printTypeOptions();
-            int input = Integer.parseInt(scanner.nextLine().trim());
-            if (input == 0) {
-                break;
-            }
-            addSelectedType(chosen, input);
-        }
-        if (chosen.isEmpty()) {
-            System.out.println("Anime should have least one type!!!");
-            return selectMultipleTypes();
-        }
-        return chosen;
-    }
-
-    // EFFECT:represent all anime types that users can choose
-    private void printTypeOptions() {
-        // stub
-        System.out.println("\n0 to finish selecting types.");
-        // List<AnimeType> vals = new ArrayList<AnimeType>();
-        AnimeType[] vals = AnimeType.values();
-        for (int i = 0; i < vals.length; i++) {
-            System.out.println((i + 1) + ". " + vals[i]);
-        }
         System.out.print("Choice: ");
     }
 
-    // EFFECTS: help users to add the types they selected to type list.
-    // MODIFIES: chosen
-    private void addSelectedType(List<AnimeType> chosen, int input) {
-        // stub
-        int idx = input - 1;
-        AnimeType[] vals = AnimeType.values();
-        if (idx >= 0 && idx < vals.length) {
-            if (!chosen.contains(vals[idx])) {
-                chosen.add(vals[idx]);
-            } else {
-                System.out.println("You already selected " + vals[idx]);
-            }
-        } else {
-            System.out.println("Invalid choice.");
-        }
+    private void addAnime() {
+        String name = readNonBlank("Anime name: ");
+        List<AnimeType> types = selectMultipleTypes();
+        YearMonth releaseDate = promptYearMonth();
+        WatchStatus status = promptWatchStatus();
 
+        animeList.addAnime(new Anime(name, types, releaseDate, status));
+        System.out.println("Anime added.");
     }
 
-    // EFFECTS: help users for a valid release time of anime in yyyy-MM format.
-    private YearMonth promptYearMonth() {
-        // return null; //stub
-        final DateTimeFormatter YM_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM");
+    private String readNonBlank(String prompt) {
         while (true) {
-            System.out.print("Enter the release date of the anime (yyyy-MM): ");
-            String in = scanner.nextLine().trim();
-            try {
-                return YearMonth.parse(in, YM_FORMATTER);
-            } catch (DateTimeParseException e) {
-                System.out.println("Invalid format. Please try again");
+            System.out.print(prompt);
+            String value = scanner.nextLine().trim();
+            if (!value.isEmpty()) {
+                return value;
             }
+            System.out.println("Value cannot be empty.");
         }
     }
 
-    // EFFECTS: a helper for users to a string watch status
-    private String promptStatusString() {
-        // return null; //stub
-        System.out.println("Enter the Watch status (watching, completed, plan to watch): ");
-        return scanner.nextLine().trim();
-    }
-
-    // EFFECTS: set anime's watching status from string that users entered.
-    // MODIFIES: anime
-    private boolean setAnimeStatus(Anime anime, String newStatusString) {
-        WatchStatus oldStatus = anime.getStatus();
-
-        try {
-            anime.setStatus(newStatusString);
-
-            if (anime.getStatus() == oldStatus) {
-                System.out.println("You just entered the same status!!!! No Change Made.");
-                return false;
-            } else {
-                System.out.println("Anime Status Updated!");
-                return true;
-            }
-        } catch (StatusException e) {
-            System.out.println("Invalid status. No change made.");
-            return false;
-        }
-    }
-
-    // EFFECTS: return anime by filtering the anime types user choosed.
-    private void searchByMultipleTypes() {
-        // stub
-        List<AnimeType> chosenTypes = selectMultipleTypes();
-
-        if (chosenTypes.isEmpty()) {
-            System.out.println("(◞‸◟) No types selected.");
+    private void viewAllAnime() {
+        List<Anime> animes = animeList.getAnimes();
+        if (animes.isEmpty()) {
+            System.out.println("No anime in the list.");
             return;
         }
 
-        List<Anime> results = animeList.searchByTypes(chosenTypes);
+        System.out.println("\n=== All Anime ===");
+        for (int i = 0; i < animes.size(); i++) {
+            System.out.println((i + 1) + ". " + animes.get(i));
+        }
+    }
 
-        if (results.isEmpty()) {
-            System.out.println("(◞‸◟) No anime found with all of these types: " + chosenTypes);
+    private void searchAnime() {
+        if (animeList.getAnimes().isEmpty()) {
+            System.out.println("Add anime before searching.");
+            return;
+        }
+
+        System.out.println("1. Search by types");
+        System.out.println("2. Search by release date");
+        int choice = readInt("Choice: ", 1, 2);
+        if (choice == 1) {
+            searchByMultipleTypes();
         } else {
-            System.out.println("=== Search Results ===");
-            for (Anime anime : results) {
-                System.out.println(anime);
+            searchByTime();
+        }
+    }
+
+    private void deleteAnime() {
+        if (animeList.getAnimes().isEmpty()) {
+            System.out.println("The list is empty.");
+            return;
+        }
+
+        viewAllAnime();
+        int index = readInt("Number to delete: ", 1, animeList.getAnimes().size()) - 1;
+        Anime selected = animeList.getAnimes().get(index);
+        if (animeList.removeAnime(selected)) {
+            System.out.println("Anime deleted.");
+        }
+    }
+
+    private void updateWatchStatus() {
+        if (animeList.getAnimes().isEmpty()) {
+            System.out.println("The list is empty.");
+            return;
+        }
+
+        viewAllAnime();
+        int index = readInt("Number to update: ", 1, animeList.getAnimes().size()) - 1;
+        Anime selected = animeList.getAnimes().get(index);
+        WatchStatus status = promptWatchStatus();
+
+        if (animeList.updateStatus(selected, status)) {
+            System.out.println("Anime status updated.");
+        } else {
+            System.out.println("The selected status is already set.");
+        }
+    }
+
+    private List<AnimeType> selectMultipleTypes() {
+        List<AnimeType> chosen = new ArrayList<>();
+        AnimeType[] values = AnimeType.values();
+
+        while (true) {
+            System.out.println("\nSelect one or more types. Enter 0 when finished.");
+            for (int i = 0; i < values.length; i++) {
+                System.out.println((i + 1) + ". " + values[i]);
+            }
+
+            int input = readInt("Choice: ", 0, values.length);
+            if (input == 0) {
+                if (!chosen.isEmpty()) {
+                    return chosen;
+                }
+                System.out.println("Select at least one type.");
+                continue;
+            }
+
+            AnimeType selected = values[input - 1];
+            if (!chosen.contains(selected)) {
+                chosen.add(selected);
+            } else {
+                System.out.println(selected + " is already selected.");
             }
         }
     }
 
-    // EFFECTS:return animes by searching the release time of anime
+    private YearMonth promptYearMonth() {
+        while (true) {
+            System.out.print("Release date (yyyy-MM): ");
+            try {
+                return YearMonth.parse(scanner.nextLine().trim());
+            } catch (DateTimeParseException exception) {
+                System.out.println("Invalid date. Use yyyy-MM.");
+            }
+        }
+    }
+
+    private WatchStatus promptWatchStatus() {
+        while (true) {
+            System.out.print("Status (watching, completed, plan to watch): ");
+            try {
+                return WatchStatus.fromInput(scanner.nextLine());
+            } catch (StatusException exception) {
+                System.out.println(exception.getMessage());
+            }
+        }
+    }
+
+    private int readInt(String prompt, int minimum, int maximum) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            try {
+                int value = Integer.parseInt(input);
+                if (value >= minimum && value <= maximum) {
+                    return value;
+                }
+            } catch (NumberFormatException exception) {
+                // The shared message below explains the accepted range.
+            }
+            System.out.println("Enter a number from " + minimum + " to " + maximum + ".");
+        }
+    }
+
+    private void searchByMultipleTypes() {
+        List<AnimeType> chosenTypes = selectMultipleTypes();
+        showResults(animeList.searchByTypes(chosenTypes));
+    }
+
     private void searchByTime() {
-        // stub
-        YearMonth ym = promptYearMonth();
-        List<Anime> results = animeList.searchByTime(ym);
+        showResults(animeList.searchByTime(promptYearMonth()));
+    }
+
+    private void showResults(List<Anime> results) {
         if (results.isEmpty()) {
-            System.out.println("No results.");
-        } else {
-            System.out.println("\n=== Search Results ===");
-            for (Anime a : results) {
-                System.out.println(a);
-            }
+            System.out.println("No matching anime found.");
+            return;
+        }
+
+        System.out.println("\n=== Search Results ===");
+        for (Anime anime : results) {
+            System.out.println(anime);
         }
     }
 
-    // EFFECTS: save the animelist into data file as a Json document
     private void saveAnimeList() {
         if (animeList.getAnimes().isEmpty()) {
-            System.out.println("(`3´) No anime in the list. Please add anime before saving.");
+            System.out.println("Add anime before saving.");
             return;
         }
 
-        System.out.print("Enter the name for your anime list documentation: ");
-        String input = scanner.nextLine().trim();
-        String filePath = "./data/" + input + ".json";
-        JsonWriter writer = new JsonWriter(filePath);
+        System.out.print("File name: ");
         try {
-            writer.open();
-            writer.write(animeList);
-            writer.close();
-            System.out.println("(*´▽`*) Your animes have been saved in " + filePath);
-        } catch (FileNotFoundException e) {
-            System.out.println("(´ﾟдﾟ`) Unable to write to file: " + filePath);
+            Path file = SafeFilePaths.resolveDataFile(scanner.nextLine());
+            new JsonWriter(file.toString()).write(animeList);
+            System.out.println("Saved to " + file);
+        } catch (IOException | IllegalArgumentException exception) {
+            System.out.println("Unable to save: " + exception.getMessage());
         }
     }
 
-    // EFFECTS: Reload my saved anime list
     private void loadAnimeList() {
-        System.out.print("Enter the file's name that you want to reload: ");
-        String input = scanner.nextLine().trim();
-        String filePath = "./data/" + input + ".json";
-        JsonReader reader = new JsonReader(filePath);
+        System.out.print("File name: ");
         try {
-            System.out.println("(*´▽`*) Successfully loaded anime list from " + filePath);
-            this.animeList = reader.read();
-        } catch (IOException e) {
-            System.out.println("( ´･ω) Unable to read from file: " + filePath);
+            Path file = SafeFilePaths.resolveDataFile(scanner.nextLine());
+            animeList = new JsonReader(file.toString()).read();
+            System.out.println("Loaded from " + file);
+        } catch (IOException | IllegalArgumentException exception) {
+            System.out.println("Unable to load: " + exception.getMessage());
         }
     }
-
 }
