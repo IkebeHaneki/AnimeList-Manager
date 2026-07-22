@@ -2,44 +2,45 @@ package model;
 
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import exception.StatusException;
 
-// represents a list of Anime
+// Represents a list of anime.
 public class AnimeList {
-
-    private List<Anime> animes;
-
-    // EFFECT:creates a new list that no anime contained
-    // MODIFIES:this
+    private final List<Anime> animes;
 
     public AnimeList() {
-        this.animes = new ArrayList<>();
+        animes = new ArrayList<>();
     }
 
-    // EFFECTS:add the anime into the anime list
     public void addAnime(Anime anime) {
-        // stub
-        animes.add(anime);
-        EventLog.getInstance().logEvent(
-                new Event("Added anime: " + anime.getName()));
+        addAnime(anime, true);
     }
 
-    // EFFECTS: remove the anime from the list
-    public void removeAnime(Anime anime) {
-        // stub
-        animes.remove(anime);
-        EventLog.getInstance().logEvent(
-                new Event("Removed anime: " + anime.getName()));
+    private void addAnime(Anime anime, boolean logEvent) {
+        Anime checkedAnime = Objects.requireNonNull(anime, "anime");
+        animes.add(checkedAnime);
+        if (logEvent) {
+            EventLog.getInstance().logEvent(new Event("Added anime: " + checkedAnime.getName()));
+        }
     }
 
-    // EFFECTES: Return the list of anime which contains the types chosen by user
+    public boolean removeAnime(Anime anime) {
+        boolean removed = animes.remove(anime);
+        if (removed) {
+            EventLog.getInstance().logEvent(new Event("Removed anime: " + anime.getName()));
+        }
+        return removed;
+    }
 
     public List<Anime> searchByTypes(List<AnimeType> types) {
+        Objects.requireNonNull(types, "types");
         List<Anime> result = new ArrayList<>();
         for (Anime anime : animes) {
             if (anime.getTypes().containsAll(types)) {
@@ -49,8 +50,8 @@ public class AnimeList {
         return result;
     }
 
-    // EFFECTS: Search the animes that users want by the release year and month
     public List<Anime> searchByTime(YearMonth time) {
+        Objects.requireNonNull(time, "time");
         List<Anime> result = new ArrayList<>();
         for (Anime anime : animes) {
             if (anime.getTime().equals(time)) {
@@ -60,41 +61,45 @@ public class AnimeList {
         return result;
     }
 
-    // EFFECTS:update the anime status when it alrady added in the list
-    // REQUIRE: anime should already in the list
-
-    public void updateStatus(Anime anime, String status) throws StatusException {
-        if (animes.contains(anime)) {
-            anime.setStatus(status);
+    public boolean updateStatus(Anime anime, WatchStatus status) {
+        if (!animes.contains(anime)) {
+            return false;
         }
+
+        WatchStatus checkedStatus = Objects.requireNonNull(status, "status");
+        if (anime.getStatus() == checkedStatus) {
+            return false;
+        }
+
+        anime.setStatus(checkedStatus);
         EventLog.getInstance().logEvent(
-                new Event("Updated status of " + anime.getName() + " to " + status));
+                new Event("Updated status of " + anime.getName() + " to " + checkedStatus));
+        return true;
     }
 
-    // EFFECT: return the anime list
+    public boolean updateStatus(Anime anime, String status) throws StatusException {
+        return updateStatus(anime, WatchStatus.fromInput(status));
+    }
+
     public List<Anime> getAnimes() {
-        return animes;
+        return Collections.unmodifiableList(animes);
     }
 
-    // EFFECTS: Convert the whole anime list into Json object;
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
         JSONArray animeArray = new JSONArray();
-        for (Anime a : animes) {
-            animeArray.put(a.toJson());
+        for (Anime anime : animes) {
+            animeArray.put(anime.toJson());
         }
         json.put("animes", animeArray);
         return json;
     }
 
-    // EFFECTS: Reconstruct the saved Json object into AnimeList;
     public static AnimeList fromJson(JSONObject root) {
         AnimeList list = new AnimeList();
         JSONArray animeArray = root.getJSONArray("animes");
         for (int i = 0; i < animeArray.length(); i++) {
-            JSONObject animeJson = animeArray.getJSONObject(i);
-            Anime anime = Anime.fromJson(animeJson);
-            list.addAnime(anime);
+            list.addAnime(Anime.fromJson(animeArray.getJSONObject(i)), false);
         }
         return list;
     }
