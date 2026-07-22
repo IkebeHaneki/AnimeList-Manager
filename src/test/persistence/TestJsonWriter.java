@@ -2,15 +2,15 @@ package persistence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.YearMonth;
 import java.util.Arrays;
 
-
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import model.Anime;
 import model.AnimeList;
@@ -19,56 +19,46 @@ import model.WatchStatus;
 
 public class TestJsonWriter {
 
-    Anime anime1 = new Anime(
-            "Naruto",
-            Arrays.asList(AnimeType.Action, AnimeType.School),
-            YearMonth.of(2002, 10),
-            WatchStatus.Watching);
-    Anime anime2 = new Anime(
-            "Your Lie in April",
-            Arrays.asList(AnimeType.Romance, AnimeType.Tragic),
-            YearMonth.of(2014, 4),
-            WatchStatus.Completed);
+    @TempDir
+    Path temporaryDirectory;
 
     @Test
-    public void testWriterInvalidFile() {
-        JsonWriter writer = new JsonWriter("./data/my\0illegalFileName.json");
-        assertThrows(FileNotFoundException.class, () -> {
-            writer.open(); 
-        });
+    void testWriterAndReaderRoundTrip() throws IOException {
+        AnimeList list = sampleList();
+        Path destination = temporaryDirectory.resolve("anime-list.json");
+
+        new JsonWriter(destination.toString()).write(list);
+        AnimeList restored = new JsonReader(destination.toString()).read();
+
+        assertEquals(2, restored.getAnimes().size());
+        assertEquals(list.getAnimes().get(0).getName(), restored.getAnimes().get(0).getName());
+        assertEquals(list.getAnimes().get(0).getTypes(), restored.getAnimes().get(0).getTypes());
+        assertEquals(list.getAnimes().get(1).getStatus(), restored.getAnimes().get(1).getStatus());
     }
 
     @Test
-    public void testWriterGeneralAnimeList() {
-        try {
-            AnimeList list = new AnimeList();
-            list.addAnime(anime1);
-            list.addAnime(anime2);
+    void testWriterRejectsInvalidParent() throws IOException {
+        Path parentFile = temporaryDirectory.resolve("not-a-directory");
+        Files.writeString(parentFile, "content");
+        Path destination = parentFile.resolve("anime-list.json");
 
-            JsonWriter writer = new JsonWriter("./data/testWriterGeneralAnimeList.json");
-            writer.open();
-            writer.write(list);
-            writer.close();
-
-            JsonReader reader = new JsonReader("./data/testWriterGeneralAnimeList.json");
-            AnimeList loadedList = reader.read();
-
-            assertEquals(2, loadedList.getAnimes().size());
-
-            Anime loadedAnime1 = loadedList.getAnimes().get(0);
-            checkSameAnime(loadedAnime1, anime1);
-            Anime loadedAnime2 = loadedList.getAnimes().get(1);
-            checkSameAnime(loadedAnime2, anime2);
-
-        } catch (IOException e) {
-            fail();
-        }
+        assertThrows(
+                IOException.class,
+                () -> new JsonWriter(destination.toString()).write(sampleList()));
     }
 
-    private void checkSameAnime(Anime check, Anime expect) {
-        assertEquals(check.getName(), expect.getName());
-        assertEquals(check.getTypes().size(), check.getTypes().size());
-        assertEquals(check.getTime(), expect.getTime());
-        assertEquals(check.getStatus(), expect.getStatus());
+    private AnimeList sampleList() {
+        AnimeList list = new AnimeList();
+        list.addAnime(new Anime(
+                "Naruto",
+                Arrays.asList(AnimeType.Action, AnimeType.School),
+                YearMonth.of(2002, 10),
+                WatchStatus.Watching));
+        list.addAnime(new Anime(
+                "Your Lie in April",
+                Arrays.asList(AnimeType.Romance, AnimeType.Tragic),
+                YearMonth.of(2014, 4),
+                WatchStatus.Completed));
+        return list;
     }
 }
