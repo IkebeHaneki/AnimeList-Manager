@@ -1,10 +1,17 @@
 package ui;
 
-//EFFECTS: Entries for the Anime List Manager Application
+import javax.swing.SwingUtilities;
 
-public class Main {
-    // stub
+// Application entry point.
+public final class Main {
+    private Main() {
+    }
+
     public static void main(String[] args) {
-        new AnimeListConsoleUI();
+        if (args.length > 0 && "--cli".equalsIgnoreCase(args[0])) {
+            new AnimeListConsoleUI();
+        } else {
+            SwingUtilities.invokeLater(AnimeListGUI::new);
+        }
     }
 }
